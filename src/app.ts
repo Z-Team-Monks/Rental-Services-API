@@ -3,8 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 //routes
-import users from "./routes/user";
-import auth from "./routes/auth";
+import Routes from "./routes/index";
 
 const app = express();
 dotenv.config({ path: './.env' });
@@ -25,8 +24,13 @@ mongoose.connect('mongodb://localhost/rentdb', {
   .catch(err => console.error('Could not connect to DB...'));
 
 app.use(express.json());
-app.use("/api/auth", auth);
-app.use("/api/users", users);
+app.use("/api/users", Routes.userRoute);
+app.use("/api/auth", Routes.authRoute);
+
+
+//lines below serve files inside uploads directory and make them accessible through http://localhost:3000/filename
+app.use(express.static(__dirname + '/public'));
+app.use(express.static('uploads'));
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running... at port " + process.env.PORT);

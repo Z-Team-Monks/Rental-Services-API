@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "../models/user";
+import User, { IUserDocument } from "../models/user";
 import ErrorMessage from "../models/errorMessage";
 import {
     Request,
@@ -13,12 +13,10 @@ import {
     generateAuthToken
 } from "../utils/authUtils";
 
-
-
 const myInfo = async (req: any, res: Response) => {    
     const user = await User.findById(req.user.id).select('-password');    
     if (!user) return res.status(404).send(new ErrorMessage('User not found'));
-    res.status(200).send(user);    
+    res.status(200).send(_.omit(user,["password"]));    
 }
 
 const createUser = async (req: Request, res: Response) => {
@@ -39,12 +37,22 @@ const createUser = async (req: Request, res: Response) => {
     }
 
     const token = generateAuthToken(user._id, user.isAdmin);
-    res.send(_.pick(user, ['_id', 'name', 'email']));
+    res.status(201).send(_.omit(user, ['password']));
+}
+
+const uploadPhoto = async (req: Request, res: Response) => {           
+    if(!req.file) return res.status(400).send(new Error("File image is required"));    
+    // @ts-ignore 
+    const user = await User.findByIdAndUpdate(req.user.id,{
+        profileImage: "http://localhost:5000/" + req.file.path.substring(8,req.file.path.length),
+    });    
+    return res.status(200).send(_.omit(user, ['password','isAdmin']));
 }
 
 const UserController = {
     myInfo,
     createUser,
+    uploadPhoto,
 }
 
 export default UserController;
