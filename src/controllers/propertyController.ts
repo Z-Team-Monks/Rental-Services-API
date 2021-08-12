@@ -16,17 +16,12 @@ const getProperty = async (req: any, res: Response) => {
     if(!property){
         return res.status(404).send(new ErrorMessage('no property with that id'));
     }
-
-    // let filledReviewes = await property.reviewes.map(async (review) => {
-    //     return await AddUserIntoToReview(review)
-    // });
     property.reviewes = await fillUsersInReviewes(property.reviewes);
-
     return res.status(200).send(property);
 }
 
 
-//to be improved by naty with filtering
+//to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
     const properties = await Property.find({});
     return res.status(200).send(properties);
@@ -138,7 +133,3 @@ const PropertyController = {
 }
 
 export default PropertyController;
-
-function review(review: any, arg1: (IReview: any) => boolean) {
-    throw new Error("Function not implemented.");
-}
