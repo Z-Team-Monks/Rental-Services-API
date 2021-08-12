@@ -26,6 +26,7 @@ mongoose.connect('mongodb://localhost/rentdb', {
 app.use(express.json());
 app.use("/api/users", Routes.userRoute);
 app.use("/api/auth", Routes.authRoute);
+app.use("/api/property/",Routes.propertyRoute);
 
 
 //lines below serve files inside uploads directory and make them accessible through http://localhost:3000/filename
