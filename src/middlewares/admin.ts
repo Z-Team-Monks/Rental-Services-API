@@ -17,8 +17,7 @@ export default function (req: Request, res: Response, next: NextFunction) {
     try {
         token = token.split(" ")[1];    
         if (!token) return res.status(404).send(new ErrorMessage('User not found'));
-        const decoded = jwt.verify(token, process.env.jwtPrivateKey as string);                
-        // @ts-ignore        
+        const decoded = jwt.verify(token, process.env.jwtPrivateKey as string);                             
         if (!token) return res.status(401).send(new ErrorMessage('You are not authorized'));        
         // @ts-ignore        
         req.user = decoded;
