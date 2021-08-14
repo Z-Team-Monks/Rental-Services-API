@@ -1,8 +1,10 @@
 import mongoose from "mongoose";
+import { IUserDocument } from "./user";
 
 export interface IProperty extends mongoose.Document {
     title: string;
-    owner: string,
+    ownerid: string,
+    owner: Object,
     category: string;
     description: string;
     images: Array < string > ;
@@ -19,12 +21,18 @@ export interface IProperty extends mongoose.Document {
 export interface IReview {
     user: any,
     message: string,
-    rating: number,    
+    rating: number,        
 }
 
 export interface ICost {
-    cost: Number,
-    per: string,
+    bill: {
+        type: Number,
+        required: true,
+    }
+    per: {
+        type: string,
+        required: true,
+    },
 }
 
 const PropertySchema = new mongoose.Schema({
@@ -40,10 +48,11 @@ const PropertySchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 2048
     },
-    owner: {
+    ownerid: {
         type: String,
         required: true,
     },
+    owner: Object,
     cost : {
         type: Object,
         required: true,

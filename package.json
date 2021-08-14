@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/lodash": "^4.14.171",
     "bcrypt": "^5.0.1",
     "config": "^3.3.6",
     "dotenv": "^10.0.0",
@@ -28,6 +27,7 @@
     "@types/config": "0.0.39",
     "@types/express": "^4.17.13",
     "@types/jsonwebtoken": "^8.5.4",
+    "@types/lodash": "^4.14.172",
     "@types/multer": "^1.4.7",
     "@types/node": "^16.4.8",
     "nodemon": "^2.0.12",

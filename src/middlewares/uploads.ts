@@ -19,6 +19,7 @@ const fileFilter = (req, file: Express.Multer.File, cb) => {
   }
 };
 
+//limits the size of the image being uploaded
 const upload = multer({
   storage: storage,
   limits: {

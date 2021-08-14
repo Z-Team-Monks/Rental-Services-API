@@ -8,7 +8,8 @@ import {
 } from "express";
 
 import _ from "lodash";
-import {fillUsersInReviewes} from "../utils/propertyUtils";
+import {fillOwnersInProperties, fillUsersInReviewes, getOwner} from "../utils/propertyUtils";
+import { getImageUrl } from "../utils/uploadUtils";
 
 
 const getProperty = async (req: any, res: Response) => {    
@@ -17,6 +18,7 @@ const getProperty = async (req: any, res: Response) => {
         return res.status(404).send(new ErrorMessage('no property with that id'));
     }
     property.reviewes = await fillUsersInReviewes(property.reviewes);
+    property.owner = await getOwner(property.ownerid);    
     return res.status(200).send(property);
 }
 
@@ -24,13 +26,16 @@ const getProperty = async (req: any, res: Response) => {
 //to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
     const properties = await Property.find({});
-    return res.status(200).send(properties);
+    const filledProperties = await fillOwnersInProperties(properties);
+    return res.status(200).send(filledProperties);
 }
 
 const addProperty = async (req: any, res: Response) => {    
-    const property = new Property(req.body);
+    const property:  IProperty = new Property(req.body);
     try{
-        property.owner = req.user.id;
+        property.ownerid = req.user.id;
+        //@ts-ignore
+        property.images = req.files.map(file => getImageUrl(file));            
         await property.save();
         return res.status(201).send(property);
     }
@@ -88,7 +93,7 @@ const reviewProperty =  async (req: any, res: Response) => {
         property.reviewes.push(newReview);
         property.rating = newRating;
         await property.save();
-        return res.status(200).send(property);                                        
+        return res.status(200).send(property.reviewes);                                        
     }
     catch(e){
         //@ts-ignore
@@ -101,23 +106,24 @@ const likeProperty = async (req: any, res: Response) => {
         let property = await Property.findById(req.params.id);            
         if(!property){
             return res.status(404).send(new ErrorMessage("property not found"));
-        }        
-
+        }                
         //adding the current item to list of properties liked by the user
-        let user = await User.findById(req.body.user.id);
+        let user = await User.findById(req.user.id);
         user?.likedProperties.push(property.id);
 
         //adding the current user to users who liked the property
         //can be removed later if the number of users only is required
-        property.likedBy.push(req.body.user.id);
+        property.likedBy.push(req.user.id);
         
         await property.save();
         await user?.save();
-        return res.status(200).send(property);
+        return res.status(200).send({
+            "likeCount" : property.likedBy.length
+        });
     }
     catch(e){
         //@ts-ignore
-        return res.send(400).send(new ErrorMessage(e.message));
+        return res.status(400).send(new ErrorMessage(e.message));
     }
 }
 
