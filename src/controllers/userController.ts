@@ -40,7 +40,7 @@ const createUser = async (req: Request, res: Response) => {
     res.status(201).send(_.omit(user, ['password']));
 }
 
-const uploadPhoto = async (req: Request, res: Response) => {           
+const uploadPhoto = async (req: any, res: Response) => {           
     if(!req.file) return res.status(400).send(new Error("File image is required"));    
     // @ts-ignore 
     const user = await User.findByIdAndUpdate(req.user.id,{
