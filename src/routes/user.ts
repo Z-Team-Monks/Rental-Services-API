@@ -7,6 +7,7 @@ import upload from "../middlewares/uploads";
 var router : Router = express.Router();
 
 router.post("/",UserController.createUser);
+router.put("/", auth, UserController.updateUser);
 router.get("/me",auth,UserController.myInfo);
 router.put("/profile",auth,upload.single('profile'),UserController.uploadPhoto);
 

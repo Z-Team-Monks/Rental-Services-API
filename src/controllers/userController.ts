@@ -49,9 +49,27 @@ const uploadPhoto = async (req: Request, res: Response) => {
     return res.status(200).send(_.omit(user, ['password','isAdmin']));
 }
 
+const updateUser = async (req: any, res: Response) => {
+    let user = await User.findById(req.user.id);
+    if (!user) return res.status(400).send(new ErrorMessage("User doesn't exist"));
+    try {
+        if (req.body.isAdmin) {
+            return res.status(403).send(new ErrorMessage("This operation requires higher privelege"));
+        }
+        const updatedUser = await User.findOneAndUpdate({"email": user.email}, req.body, {new: true});
+        return res.status(200).send(updatedUser);
+    } 
+    catch(e) {
+        // @ts-ignore
+        return res.status(400).send(e.message);
+    }
+
+}
+
 const UserController = {
     myInfo,
     createUser,
+    updateUser,
     uploadPhoto,
 }
 
