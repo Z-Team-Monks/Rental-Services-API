@@ -1,6 +1,8 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import errorMiddleware from "./middlewares/error";
+require("express-async-errors");
 
 //routes
 import Routes from "./routes/index";
@@ -32,6 +34,7 @@ app.use("/api/property/",Routes.propertyRoute);
 //lines below serve files inside uploads directory and make them accessible through http://localhost:3000/filename
 app.use(express.static(__dirname + '/public'));
 app.use(express.static('uploads'));
+app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {
   console.log("Server is running... at port " + process.env.PORT);
