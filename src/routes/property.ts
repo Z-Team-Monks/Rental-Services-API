@@ -6,6 +6,7 @@ import upload from "../middlewares/uploads";
 var router : Router = express.Router();
 
 router.get("/",PropertyController.getProperties)
+router.get("/search",PropertyController.searchProperties);
 router.post("/",auth,upload.array('images',10),PropertyController.addProperty);
 router.get("/:id",PropertyController.getProperty);
 router.put("/:id",auth,PropertyController.updateProperty);

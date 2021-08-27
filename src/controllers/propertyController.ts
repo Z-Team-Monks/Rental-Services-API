@@ -7,7 +7,7 @@ import {
     Response
 } from "express";
 
-import _ from "lodash";
+import _, { result } from "lodash";
 import {fillOwnersInProperties, fillUsersInReviewes, getOwner} from "../utils/propertyUtils";
 import { getImageUrl } from "../utils/uploadUtils";
 
@@ -28,6 +28,29 @@ const getProperties = async (req: any, res: Response) => {
     const properties = await Property.find({});
     const filledProperties = await fillOwnersInProperties(properties);
     return res.status(200).send(filledProperties);
+}
+
+
+const searchProperties = async(req: Request, res:Response) => {    
+    const limitParam = req.query.limit;
+
+    if(limitParam && isNaN(+limitParam)){
+        return res.status(400).send("Invalid value for limit");
+    }
+
+    const limit:number = Number(limitParam);
+    const keyword = req.query.keyword?.toString();    
+
+    if(!keyword){
+        return res.status(200).send([]);
+    };
+
+    const results = await Property.find(
+        {
+            $text: {$search: keyword}
+        }
+    ).limit(limit);
+    return res.status(200).send(results);
 }
 
 const addProperty = async (req: any, res: Response) => {    
@@ -136,6 +159,7 @@ const PropertyController = {
     likeProperty,
     getProperties,
     getProperty,
+    searchProperties
 }
 
 export default PropertyController;
