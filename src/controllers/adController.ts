@@ -11,10 +11,10 @@ import Property, {IProperty} from "../models/property";
 
 const createAd = async (req: Request, res: Response) => {
     let ad;
-    let property = await Property.findById(req.params.id);
+    let property = await Property.findById(req.body.propertyId);
     if (!property) return res.status(404).send(new ErrorMessage("Property not found"));
     try {
-        ad = new Ad({...req.body, "propertyId": req.params.id});
+        ad = new Ad({...req.body, "propertyId": req.body.propertyId});
         await ad.save();
     } catch (e) {
         return res.status(400).send(e.message);
