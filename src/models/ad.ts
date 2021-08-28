@@ -4,6 +4,7 @@ export interface IAdDocument extends mongoose.Document {
     propertyId: string;
     startDate: Date;
     endDate: Date;
+    active: boolean;
 }
 
 const AdSchema = new mongoose.Schema({
@@ -19,6 +20,11 @@ const AdSchema = new mongoose.Schema({
     endDate: {
         type: Date,
         required: true,
+    },
+    isApproved: {
+        type: Boolean,
+        required: false,
+        default: false,
     }
 });
 
