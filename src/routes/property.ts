@@ -13,4 +13,4 @@ router.put("/:id",auth,PropertyController.updateProperty);
 router.post("/:id/review",auth,PropertyController.reviewProperty);
 router.post("/:id/like",auth,PropertyController.likeProperty);
 
-export default router;
+export default router;  

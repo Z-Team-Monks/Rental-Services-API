@@ -30,6 +30,28 @@ const getProperties = async (req: any, res: Response) => {
     return res.status(200).send(filledProperties);
 }
 
+const searchProperties = async(req: Request, res:Response) => {    
+    const limitParam = req.query.limit;
+
+    if(limitParam && isNaN(+limitParam)){
+        return res.status(400).send("Invalid value for limit");
+    }
+
+    const limit:number = Number(limitParam);
+    const keyword = req.query.keyword?.toString();    
+
+    if(!keyword){
+        return res.status(200).send([]);
+    };
+
+    const results = await Property.find(
+        {
+            $text: {$search: keyword},                        
+        },          
+    ).limit(limit);
+    return res.status(200).send(results);
+}
+
 const addProperty = async (req: any, res: Response) => {    
     const property:  IProperty = new Property(req.body);
     try{
@@ -136,6 +158,7 @@ const PropertyController = {
     likeProperty,
     getProperties,
     getProperty,
+    searchProperties,
 }
 
 export default PropertyController;
