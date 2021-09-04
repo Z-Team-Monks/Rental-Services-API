@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import User, { IUserDocument } from "../models/user";
+import Property, { IProperty } from "../models/property";
 import ErrorMessage from "../models/errorMessage";
 import {
     Request,
@@ -66,11 +67,45 @@ const updateUser = async (req: any, res: Response) => {
 
 }
 
+const getPosts = async (req: any, res: Response) => {    
+    const user = await User.findById(req.user.id).select('posts');    
+    if (!user) return res.status(404).send(new ErrorMessage('User not found'));
+    res.status(200).send(user);    
+}
+
+const addWishlist = async (req: any, res: Response) => {
+    const { propertyId } = req.body
+    if(!propertyId) return res.status(400).send(new ErrorMessage("Posted property identifier is required!"));
+
+    let property = await Property.findById(propertyId);
+    if(!property) return res.status(404).send(new ErrorMessage("No property found with given id!"));
+
+    if(property.ownerid != req.user.id) return res.status(400).send(new ErrorMessage("Property does'nt belong to this user!"));
+
+    try {
+        const updatedUser = await User.findOneAndUpdate({"email": req.user.email}, { $push: { wishlists: propertyId } }, {new: true});
+        return res.status(200).send(updatedUser);
+    } 
+    catch(e) {
+        // @ts-ignore
+        return res.status(400).send(e.message);
+    }
+}
+
+const getWishlists = async (req: any, res: Response) => {    
+    const user = await User.findById(req.user.id).select('wishlists');    
+    if (!user) return res.status(404).send(new ErrorMessage('User not found'));
+    res.status(200).send(user);    
+}
+
 const UserController = {
     myInfo,
     createUser,
     updateUser,
     uploadPhoto,
+    getPosts,
+    addWishlist,
+    getWishlists,
 }
 
 export default UserController;
