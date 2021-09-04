@@ -37,6 +37,9 @@ const addProperty = async (req: any, res: Response) => {
         //@ts-ignore
         property.images = req.files.map(file => getImageUrl(file));            
         await property.save();
+
+        await User.findOneAndUpdate({"email": req.user.email}, { $push: { posts: property.id } }, {new: true});
+
         return res.status(201).send(property);
     }
     catch(e){

@@ -8,7 +8,14 @@ export interface IUserDocument extends mongoose.Document {
     isAdmin: boolean;
     profileImage: string;
     likedProperties: Array<Number>;
+    posts: Array<IProperty["_id"]>;
+    wishlists: Array<IWishlist>;
 }
+
+export interface IWishlist{
+    propertyId: string,
+    dateSaved: Date,
+} 
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -41,6 +48,14 @@ const UserSchema = new mongoose.Schema({
     likedProperties: {
         type : Array,
         default: [],
+    },
+    posts: {
+        type: Array,
+        default:[]
+    },
+    wishlists: {
+        type:Array,
+        default: []
     }
 });
 

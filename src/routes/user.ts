@@ -11,4 +11,9 @@ router.put("/", auth, UserController.updateUser);
 router.get("/me",auth,UserController.myInfo);
 router.put("/profile",auth,upload.single('profile'),UserController.uploadPhoto);
 
+router.get("/posts", auth, UserController.getPosts);
+
+router.post("/wishlists", auth, UserController.addWishlist);
+router.get("/wishlists", auth, UserController.getWishlists);
+
 export default router;
