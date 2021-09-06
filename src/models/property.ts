@@ -95,6 +95,6 @@ const PropertySchema = new mongoose.Schema({
 
 PropertySchema.index({title: "text",location: "text",category: "text",description: "text"});
 
-const user = mongoose.model < IProperty > ("Property", PropertySchema);
+const property = mongoose.model < IProperty > ("Property", PropertySchema);
 
-export default user;
+export default property;

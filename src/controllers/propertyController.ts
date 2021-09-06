@@ -47,8 +47,8 @@ const searchProperties = async(req: Request, res:Response) => {
 
     const results = await Property.find(
         {
-            $text: {$search: keyword}
-        }
+            $text: {$search: keyword},                        
+        },          
     ).limit(limit);
     return res.status(200).send(results);
 }
