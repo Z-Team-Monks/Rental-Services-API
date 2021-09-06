@@ -55,10 +55,14 @@ const searchProperties = async(req: Request, res:Response) => {
 
 const addProperty = async (req: any, res: Response) => {    
     const property:  IProperty = new Property(req.body);
+    //@ts-ignore
+    console.log(req.body);
     try{
         property.ownerid = req.user.id;
         //@ts-ignore
-        property.images = req.files.map(file => getImageUrl(file));            
+        console.log(req.files);
+        //@ts-ignore        
+        property.images = req.files.map(file => getImageUrl(file));                    
         await property.save();
 
         await User.findOneAndUpdate({"email": req.user.email}, { $push: { posts: property.id } }, {new: true});
@@ -66,6 +70,8 @@ const addProperty = async (req: any, res: Response) => {
         return res.status(201).send(property);
     }
     catch(e){
+        //@ts-ignore
+        console.log(e.message);
         //@ts-ignore
         return res.status(400).send(new ErrorMessage(e.message));
     }
