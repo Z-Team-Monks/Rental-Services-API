@@ -25,7 +25,14 @@ const getProperty = async (req: any, res: Response) => {
 
 //to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
-    const properties = await Property.find({status: "approved"});
+    var filterOptions: {[k: string]: any} = {};
+
+    if(req.query.category){
+        filterOptions.category = req.query.category
+    }
+    filterOptions.status = "approved";
+
+    const properties = await Property.find(filterOptions);
     const filledProperties = await fillOwnersInProperties(properties);
     return res.status(200).send(filledProperties);
 }
