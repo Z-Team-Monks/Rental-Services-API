@@ -102,6 +102,66 @@ const updateProperty = async (req: any, res: Response) => {
     }    
 }
 
+const getUserReview = async (req: any, res: Response) => {    
+    try{        
+        let property = await Property.findById(req.params.id);            
+        if(!property){
+            return res.status(404).send(new ErrorMessage("property not found"));
+        }        
+        
+        let hasUserAlreadyReviewed = property.reviewes.filter(review => review.user == req.user.id);
+        
+        if(hasUserAlreadyReviewed.length == 0){
+            return res.status(400).send(new ErrorMessage("user has not reviewed the property yet"));
+        }
+        return res.status(200).send(hasUserAlreadyReviewed[0]);                                        
+    }
+    catch(e){
+        //@ts-ignore
+        return res.status(400).send(new ErrorMessage(e.message));
+    }    
+}
+
+const updateReviewProperty = async (req: any, res: Response) => {    
+    try{        
+        let property = await Property.findById(req.params.id);            
+        if(!property){
+            return res.status(404).send(new ErrorMessage("property not found"));
+        }        
+        
+        let hasUserAlreadyReviewed = property.reviewes.filter(review => review.user == req.user.id);
+        
+        if(hasUserAlreadyReviewed.length == 0){
+            return res.status(400).send(new ErrorMessage("user has not reviewed the property yet"));
+        }
+
+        if(!(req.body.message && req.body.rating)){
+            return res.status(400).send(new ErrorMessage("message and rating are required"));
+        }
+        
+        const newReview : IReview = {
+            user: req.user.id,
+            message:req.body.message,
+            rating: req.body.rating
+        };
+                        
+        //updating the rating using the mean method        
+        const totalRating = (property.rating * property.reviewes.length) - hasUserAlreadyReviewed[0].rating;
+        property.reviewes = property.reviewes.filter(review => review.user != req.user.id);        
+        property.reviewes.push(newReview);
+        const newRating = (totalRating + req.body.rating) / (property.reviewes.length  + 1);
+
+        property.rating = newRating;
+        await property.save();
+        return res.status(200).send(newReview);                                        
+    }
+    catch(e){
+        //@ts-ignore
+        return res.status(400).send(new ErrorMessage(e.message));
+    }    
+}
+
+
 const reviewProperty =  async (req: any, res: Response) => {    
     try{        
         let property = await Property.findById(req.params.id);            
@@ -121,7 +181,7 @@ const reviewProperty =  async (req: any, res: Response) => {
 
         //updating the rating using the mean method
         const totalRating = property.rating * property.reviewes.length;
-        const newRating = (totalRating + req.body.rating) / (property.reviewes.length  + 1);
+        const newRating = (totalRating + req.body.rating) / (property.reviewes.length  + 1) * 1.1;
 
         const newReview : IReview = {
             user: req.user.id,
@@ -132,7 +192,7 @@ const reviewProperty =  async (req: any, res: Response) => {
         property.reviewes.push(newReview);
         property.rating = newRating;
         await property.save();
-        return res.status(200).send(property.reviewes);                                        
+        return res.status(200).send(newReview);                                        
     }
     catch(e){
         //@ts-ignore
@@ -153,8 +213,7 @@ const likeProperty = async (req: any, res: Response) => {
         }
 
         if(user.likedProperties.includes(property.id)){
-            return res.status(400).send(new ErrorMessage("User has already like the property"));
-            //user.likedProperties = user.likedProperties.filter(propertyId => propertyId != property!.id);
+            return res.status(400).send(new ErrorMessage("User has already like the property"));            
         }
         user.likedProperties.push(property.id);
 
@@ -179,8 +238,7 @@ const unlikeProperty= async (req: any, res: Response) => {
         let property = await Property.findById(req.params.id);            
         if(!property){
             return res.status(404).send(new ErrorMessage("property not found"));
-        }                
-        //adding the current item to list of properties liked by the user
+        }                        
         let user = await User.findById(req.user.id);
         if(!user){
             return res.status(400).send(new ErrorMessage("user not found"));
@@ -216,7 +274,9 @@ const PropertyController = {
     unlikeProperty,
     getProperties,
     getProperty,
-    searchProperties
+    searchProperties,
+    updateReviewProperty,
+    getUserReview
 }
 
 export default PropertyController;
