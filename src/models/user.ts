@@ -50,13 +50,16 @@ const UserSchema = new mongoose.Schema({
         default : "https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" 
     },
     likedProperties: {
+        required: true,
         type : Array,
         default: [],
     },
-    posts: {
-        type: Array,
-        default:[]
-    },
+    posts: [
+        {
+            type: mongoose.Types.ObjectId,            
+            ref: "Property"
+        }
+      ],
     wishlists: {
         type:Array,
         default: []

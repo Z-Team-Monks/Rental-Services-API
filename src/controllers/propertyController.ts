@@ -56,16 +56,22 @@ const searchProperties = async(req: Request, res:Response) => {
 const addProperty = async (req: any, res: Response) => {    
     const property:  IProperty = new Property(req.body);
     //@ts-ignore
-    console.log(req.body);
+    console.log(req.user.id);
     try{
         property.ownerid = req.user.id;
         //@ts-ignore
-        console.log(req.files);
+        // console.log(req.files);
         //@ts-ignore        
         property.images = req.files.map(file => getImageUrl(file));                    
         await property.save();
-
-        await User.findOneAndUpdate({"email": req.user.email}, { $push: { posts: property.id } }, {new: true});
+                
+        // let updatedUser = await User.findOneAndUpdate({"id": req.user.id}, { $push: { posts: property.id } }, {new: true});
+        
+        let user = await User.findById(req.user.id);
+        if(user != null){
+            user.posts.push(property.id);
+            await user.save();
+        }            
 
         return res.status(201).send(property);
     }
@@ -82,8 +88,8 @@ const updateProperty = async (req: any, res: Response) => {
         const property = await Property.findById(req.params.id);            
         if(!property){
             return res.status(404).send(new ErrorMessage("property not found"));
-        }
-        if(property.owner != req.user.id){
+        }                
+        if(property.ownerid != req.user.id){
             return res.status(403).send(new ErrorMessage("Current user can't update this property"));
         }        
         const newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true});            
