@@ -25,7 +25,7 @@ const getProperty = async (req: any, res: Response) => {
 
 //to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
-    const properties = await Property.find({});
+    const properties = await Property.find({status: "approved"});
     const filledProperties = await fillOwnersInProperties(properties);
     return res.status(200).send(filledProperties);
 }
@@ -47,7 +47,8 @@ const searchProperties = async(req: Request, res:Response) => {
 
     const results = await Property.find(
         {
-            $text: {$search: keyword},                        
+            $text: {$search: keyword}, 
+            status: "approved",                       
         },          
     ).limit(limit);
     return res.status(200).send(results);

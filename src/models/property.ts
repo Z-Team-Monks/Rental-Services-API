@@ -9,7 +9,7 @@ export interface IProperty extends mongoose.Document {
     description: string;
     images: Array < string > ;
     location: string,
-    status: boolean,
+    status: string,
     reviewes: Array<IReview>,
     rating: number,    
     cost : ICost,
@@ -73,9 +73,9 @@ const PropertySchema = new mongoose.Schema({
         type: String,
     },
     status: {
-        type: Boolean,
+        type: String,
         required: true,
-        default: true,
+        default: "pending",
     },
     rating: {
         type: Number,
