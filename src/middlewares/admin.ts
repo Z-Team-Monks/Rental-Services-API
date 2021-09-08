@@ -20,15 +20,17 @@ export default function (req: Request, res: Response, next: NextFunction) {
   try {
     token = token.split(" ")[1];    
     const decoded = jwt.verify(token, process.env.jwtPrivateKey as string); 
+    // console.log(decoded);
     //@ts-ignore
     if (decoded.isAdmin) {
         //@ts-ignore
         req.user = decoded; 
         next();
+        return;
     } 
     return res.status(403).send(new ErrorMessage("Higher privelege is required."));
   }
   catch (e) {        
-    res.status(400).send('Invalid token.');
+    return res.status(400).send('Invalid token.');
   }
 }

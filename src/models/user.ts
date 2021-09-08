@@ -3,6 +3,7 @@ import { IProperty } from "./property";
 
 export interface IUserDocument extends mongoose.Document {
     name: string;
+    phoneNumber: string;
     email: string;
     password: string;
     isAdmin: boolean;
@@ -24,6 +25,10 @@ const UserSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 50
     },
+    phoneNumber : {
+        type: String,   
+        default: "",             
+    },
     email: {
         type: String,
         required: true,
@@ -43,16 +48,20 @@ const UserSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,       
-        default : "http://localhost:5000/profile.jpeg" 
+        default : "https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8cHJvZmlsZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" 
     },
-    likedProperties: {
-        type : Array,
-        default: [],
-    },
-    posts: {
-        type: Array,
-        default:[]
-    },
+    likedProperties: [
+        {
+            type: mongoose.Types.ObjectId,            
+            ref: "Property"
+        }
+      ],
+    posts: [
+        {
+            type: mongoose.Types.ObjectId,            
+            ref: "Property"
+        }
+      ],
     wishlists: {
         type:Array,
         default: []

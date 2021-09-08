@@ -29,6 +29,7 @@ app.use(express.json());
 app.use("/api/v1/users", Routes.userRoute);
 app.use("/api/v1/auth", Routes.authRoute);
 app.use("/api/v1/property/",Routes.propertyRoute);
+app.use("/api/v1/admin/",Routes.adminRoute);
 
 
 //lines below serve files inside uploads directory and make them accessible through http://localhost:3000/filename

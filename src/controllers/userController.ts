@@ -14,8 +14,9 @@ import {
     generateAuthToken
 } from "../utils/authUtils";
 
+
 const myInfo = async (req: any, res: Response) => {    
-    const user = await User.findById(req.user.id).select('-password');    
+    const user = await User.findById(req.user.id).populate('posts').populate('likedProperties').select('-password');    
     if (!user) return res.status(404).send(new ErrorMessage('User not found'));
     res.status(200).send(_.omit(user,["password"]));    
 }

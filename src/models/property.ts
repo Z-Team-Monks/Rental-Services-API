@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import { IUserDocument } from "./user";
 
 export interface IProperty extends mongoose.Document {
@@ -9,10 +9,9 @@ export interface IProperty extends mongoose.Document {
     description: string;
     images: Array < string > ;
     location: string,
-    status: boolean,
+    status: string,
     reviewes: Array<IReview>,
-    rating: number,
-    // ratings: Array < number > ,
+    rating: number,    
     cost : ICost,
     likedBy: Array < string > ,
     createdAt: Date;
@@ -38,12 +37,14 @@ export interface ICost {
 const PropertySchema = new mongoose.Schema({
     title: {
         type: String,
+        text: true,
         required: true,
         minlength: 5,
         maxlength: 250
     },    
     description: {
         type: String,
+        text: true,
         required: true,
         minlength: 5,
         maxlength: 2048
@@ -59,6 +60,7 @@ const PropertySchema = new mongoose.Schema({
     },
     category: {
         type: String,
+        text: true,
         required: true,
         minlength: 5,
         maxlength: 50,
@@ -67,12 +69,13 @@ const PropertySchema = new mongoose.Schema({
         type: Array,
     },
     location: {
+        text: true,
         type: String,
     },
     status: {
-        type: Boolean,
+        type: String,
         required: true,
-        default: true,
+        default: "pending",
     },
     rating: {
         type: Number,
@@ -90,6 +93,8 @@ const PropertySchema = new mongoose.Schema({
 });
 
 
-const user = mongoose.model < IProperty > ("Property", PropertySchema);
+PropertySchema.index({title: "text",location: "text",category: "text",description: "text"});
 
-export default user;
+const property = mongoose.model < IProperty > ("Property", PropertySchema);
+
+export default property;
