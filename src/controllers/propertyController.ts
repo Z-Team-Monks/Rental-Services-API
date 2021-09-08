@@ -51,6 +51,10 @@ const searchProperties = async(req: Request, res:Response) => {
             status: "approved",                       
         },          
     ).limit(limit);
+
+    for(let i = 0; i < results.length; i++){        
+        results[i].owner = await getOwner(results[i].ownerid);
+    }
     return res.status(200).send(results);
 }
 
