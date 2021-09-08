@@ -147,14 +147,54 @@ const likeProperty = async (req: any, res: Response) => {
         }                
         //adding the current item to list of properties liked by the user
         let user = await User.findById(req.user.id);
-        user?.likedProperties.push(property.id);
+        if(!user){
+            return res.status(400).send(new ErrorMessage("user not found"));
+        }
+
+        if(user.likedProperties.includes(property.id)){
+            return res.status(400).send(new ErrorMessage("User has already like the property"));
+            //user.likedProperties = user.likedProperties.filter(propertyId => propertyId != property!.id);
+        }
+        user.likedProperties.push(property.id);
 
         //adding the current user to users who liked the property
         //can be removed later if the number of users only is required
         property.likedBy.push(req.user.id);
         
         await property.save();
-        await user?.save();
+        await user.save();
+        return res.status(200).send({
+            "likeCount" : property.likedBy.length
+        });
+    }
+    catch(e){
+        //@ts-ignore
+        return res.status(400).send(new ErrorMessage(e.message));
+    }
+}
+
+const unlikeProperty= async (req: any, res: Response) => {    
+    try{
+        let property = await Property.findById(req.params.id);            
+        if(!property){
+            return res.status(404).send(new ErrorMessage("property not found"));
+        }                
+        //adding the current item to list of properties liked by the user
+        let user = await User.findById(req.user.id);
+        if(!user){
+            return res.status(400).send(new ErrorMessage("user not found"));
+        }
+
+        if(user.likedProperties.includes(property.id) == false){
+            return res.status(400).send(new ErrorMessage("User hasn't liked this property yet"));            
+        }
+        
+        //removing form both lists
+        user.likedProperties = user.likedProperties.filter(propertyId => propertyId != property!.id);
+        property.likedBy = property.likedBy.filter(userId => userId != req.user.id);        
+        
+        await property.save();
+        await user.save();
         return res.status(200).send({
             "likeCount" : property.likedBy.length
         });
@@ -172,6 +212,7 @@ const PropertyController = {
     updateProperty,
     reviewProperty,
     likeProperty,
+    unlikeProperty,
     getProperties,
     getProperty,
     searchProperties

@@ -12,5 +12,6 @@ router.get("/:id",PropertyController.getProperty);
 router.put("/:id",auth,PropertyController.updateProperty);
 router.post("/:id/review",auth,PropertyController.reviewProperty);
 router.post("/:id/like",auth,PropertyController.likeProperty);
+router.delete("/:id/like",auth,PropertyController.unlikeProperty);
 
 export default router;
