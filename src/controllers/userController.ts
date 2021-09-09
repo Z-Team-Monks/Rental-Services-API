@@ -55,10 +55,7 @@ const updateUser = async (req: any, res: Response) => {
     let user = await User.findById(req.user.id);
     if (!user) return res.status(400).send(new ErrorMessage("User doesn't exist"));
     try {
-        if (req.body.isAdmin) {
-            return res.status(403).send(new ErrorMessage("This operation requires higher privelege"));
-        }
-        const updatedUser = await User.findOneAndUpdate({"email": user.email}, req.body, {new: true});
+        const updatedUser = await User.findOneAndUpdate({"email": user.email}, req.body, {new: true}).populate('posts').populate('likedProperties').select('-password');
         return res.status(200).send(updatedUser);
     } 
     catch(e) {

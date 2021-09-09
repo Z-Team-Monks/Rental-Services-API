@@ -86,6 +86,7 @@ const addProperty = async (req: any, res: Response) => {
             await user.save();
         }            
 
+        console.log(property);        
         return res.status(201).send(property);
     }
     catch(e){
@@ -104,9 +105,10 @@ const updateProperty = async (req: any, res: Response) => {
         }                
         if(property.ownerid != req.user.id){
             return res.status(403).send(new ErrorMessage("Current user can't update this property"));
-        }        
+        }                        
         const newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true}); 
         if(newProperty != null){
+            newProperty!.owner = await getOwner(newProperty!.ownerid);
             newProperty.status = "pending"; 
         }          
         return res.status(200).send(newProperty);                    
