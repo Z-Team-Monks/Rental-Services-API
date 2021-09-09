@@ -163,10 +163,10 @@ const updateReviewProperty = async (req: any, res: Response) => {
         };
                         
         //updating the rating using the mean method        
-        const totalRating = (property.rating * property.reviewes.length) - hasUserAlreadyReviewed[0].rating;
         property.reviewes = property.reviewes.filter(review => review.user != req.user.id);        
         property.reviewes.push(newReview);
-        const newRating = (totalRating + req.body.rating) / (property.reviewes.length  + 1);
+        const totalRating = (property.rating * property.reviewes.length);
+        const newRating = (totalRating + req.body.rating) / (property.reviewes.length);
 
         property.rating = newRating;
         await property.save();
