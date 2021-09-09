@@ -25,7 +25,14 @@ const getProperty = async (req: any, res: Response) => {
 
 //to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
-    const properties = await Property.find({status: "approved"});
+    var filterOptions: {[k: string]: any} = {};
+
+    if(req.query.category){
+        filterOptions.category = req.query.category
+    }
+    filterOptions.status = "approved";
+
+    const properties = await Property.find(filterOptions);
     const filledProperties = await fillOwnersInProperties(properties);
     return res.status(200).send(filledProperties);
 }
@@ -64,6 +71,7 @@ const addProperty = async (req: any, res: Response) => {
     console.log(req.user.id);
     try{
         property.ownerid = req.user.id;
+        property.status = "pending";
         //@ts-ignore
         // console.log(req.files);
         //@ts-ignore        
@@ -97,12 +105,12 @@ const updateProperty = async (req: any, res: Response) => {
         }                
         if(property.ownerid != req.user.id){
             return res.status(403).send(new ErrorMessage("Current user can't update this property"));
-        }        
-        var newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true});  
-        newProperty!.owner = await getOwner(newProperty!.ownerid);
-        // for(let i = 0; i < results.length; i++){        
-        //     results[i].owner = await getOwner(results[i].ownerid);
-        // }          
+        }                        
+        const newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true}); 
+        if(newProperty != null){
+            newProperty!.owner = await getOwner(newProperty!.ownerid);
+            newProperty.status = "pending"; 
+        }          
         return res.status(200).send(newProperty);                    
     }
     catch(e){
