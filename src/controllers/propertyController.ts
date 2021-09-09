@@ -71,6 +71,7 @@ const addProperty = async (req: any, res: Response) => {
     console.log(req.user.id);
     try{
         property.ownerid = req.user.id;
+        property.status = "pending";
         //@ts-ignore
         // console.log(req.files);
         //@ts-ignore        
@@ -104,7 +105,10 @@ const updateProperty = async (req: any, res: Response) => {
         if(property.ownerid != req.user.id){
             return res.status(403).send(new ErrorMessage("Current user can't update this property"));
         }        
-        const newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true});            
+        const newProperty = await Property.findByIdAndUpdate(req.params.id, req.body, {new : true}); 
+        if(newProperty != null){
+            newProperty.status = "pending"; 
+        }          
         return res.status(200).send(newProperty);                    
     }
     catch(e){
