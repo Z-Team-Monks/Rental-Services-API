@@ -7,9 +7,10 @@ import upload from "../controllers/uploadImage";
 var router : Router = express.Router();
 
 router.get("/",PropertyController.getProperties)
-router.post("/",auth,upload.multiUpload,PropertyController.addProperty);
+router.post("/",auth,upload.singleUpload,PropertyController.addProperty);
 
 router.get("/search",PropertyController.searchProperties);
+router.get("/top",PropertyController.bestRatedProperties);
 
 router.get("/:id",PropertyController.getProperty);
 router.put("/:id",auth,PropertyController.updateProperty);
