@@ -22,8 +22,15 @@ const getToken = async (req : Request, res: Response) => {
     res.send(token);
 }
 
+const isAdmin = async (req : Request, res: Response) => {
+    //@ts-ignore
+    let isAdmin = req.user.isAdmin;
+    res.send({isAdmin});
+}
+
 const AuthController = {
     getToken,
+    isAdmin
 }
 
 export default AuthController;

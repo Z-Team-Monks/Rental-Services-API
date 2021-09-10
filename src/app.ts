@@ -26,9 +26,10 @@ mongoose.connect('mongodb://localhost/rentdb', {
   .catch(err => console.error('Could not connect to DB...'));
 
 app.use(express.json());
-app.use("/api/users", Routes.userRoute);
-app.use("/api/auth", Routes.authRoute);
-app.use("/api/property/",Routes.propertyRoute);
+app.use("/api/v1/users", Routes.userRoute);
+app.use("/api/v1/auth", Routes.authRoute);
+app.use("/api/v1/property/",Routes.propertyRoute);
+app.use("/api/v1/admin/",Routes.adminRoute);
 
 
 //lines below serve files inside uploads directory and make them accessible through http://localhost:port/filename
