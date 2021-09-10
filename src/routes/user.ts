@@ -10,6 +10,7 @@ var router : Router = express.Router();
 router.post("/",UserController.createUser);
 router.put("/", auth, UserController.updateUser);
 router.get("/me",auth,UserController.myInfo);
+router.post("/deleteme",auth,UserController.deleteUser);
 router.put("/profile",auth,upload.singleUpload,UserController.uploadPhoto);
 
 router.get("/posts", auth, UserController.getPosts);

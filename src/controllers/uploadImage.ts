@@ -29,7 +29,7 @@ const uploadImage = multer({
 });
 
 
-const multiUpload = uploadImage.array('images',10);
+const multiUpload = uploadImage.array('files',10);
 const singleUpload = uploadImage.single("image");
 
 const uploads = {
