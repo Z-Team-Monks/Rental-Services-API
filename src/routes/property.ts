@@ -22,4 +22,4 @@ router.put("/:id/review",auth,PropertyController.updateReviewProperty);
 router.post("/:id/like",auth,PropertyController.likeProperty);
 router.delete("/:id/like",auth,PropertyController.unlikeProperty);
 
-export default router;
+export default router;  

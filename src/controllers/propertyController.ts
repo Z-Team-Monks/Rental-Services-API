@@ -23,7 +23,6 @@ const getProperty = async (req: any, res: Response) => {
 }
 
 
-//to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
     var filterOptions: {[k: string]: any} = {};
 
@@ -40,7 +39,6 @@ const getProperties = async (req: any, res: Response) => {
     }
     return res.status(200).send(filledProperties);
 }
-
 
 const searchProperties = async(req: Request, res:Response) => {    
     const limitParam = req.query.limit;
@@ -253,8 +251,6 @@ const likeProperty = async (req: any, res: Response) => {
         }
         user.likedProperties.push(property.id);
 
-        //adding the current user to users who liked the property
-        //can be removed later if the number of users only is required
         property.likedBy.push(req.user.id);
         
         await property.save();
