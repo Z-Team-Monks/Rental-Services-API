@@ -13,6 +13,7 @@ import bcrypt from "bcrypt";
 import {
     generateAuthToken
 } from "../utils/authUtils";
+import { fillOwnersInProperties } from "../utils/propertyUtils";
 
 
 const myInfo = async (req: any, res: Response) => {    
@@ -41,6 +42,29 @@ const createUser = async (req: Request, res: Response) => {
     const token = generateAuthToken(user._id, user.isAdmin);
     res.status(201).send(_.omit(user, ['password']));
 }
+
+const deleteUser = async (req: Request, res: Response) => {
+    //@ts-ignore
+    const id = req.user.id;
+    try{
+        await User.findByIdAndDelete(id);
+        await Property.deleteMany({
+            ownerid: id,
+        });
+        
+        const properties = await Property.find({});
+        for(let i = 0; i < properties.length; i++){
+            properties[i].reviewes = properties[i].reviewes.filter(review => review.user != id);
+            await properties[i].save();
+        }
+        return res.status(201).send("User deleted");        
+    }
+    catch(e){
+        // @ts-ignore
+        return res.status(400).send(e.message);
+    }
+}
+
 
 const uploadPhoto = async (req: any, res: Response) => {                   
     if(!req.file) return res.status(400).send(new Error("File image is required"));    
@@ -103,6 +127,7 @@ const UserController = {
     getPosts,
     addWishlist,
     getWishlists,
+    deleteUser,
 }
 
 export default UserController;

@@ -67,14 +67,12 @@ const searchProperties = async(req: Request, res:Response) => {
 
 
 const addProperty = async (req: any, res: Response) => {    
-    const property:  IProperty = new Property(req.body);
-    //@ts-ignore
-    console.log(req.user.id);
+    const property:  IProperty = new Property(req.body);    
     try{
         property.ownerid = req.user.id;
         property.status = "pending";
         //@ts-ignore
-        console.log(req.files);
+        // console.log(req.files);
         //@ts-ignore        
         property.images = req.files.map(file => file.filename);                    
         await property.save();
@@ -87,7 +85,7 @@ const addProperty = async (req: any, res: Response) => {
             await user.save();
         }            
 
-        console.log(property);        
+        // console.log(property);        
         return res.status(201).send(property);
     }
     catch(e){
@@ -178,12 +176,12 @@ const updateReviewProperty = async (req: any, res: Response) => {
         };
                         
         //updating the rating using the mean method        
+        const totalRating = (property.rating * property.reviewes.length);
         property.reviewes = property.reviewes.filter(review => review.user != req.user.id);        
         property.reviewes.push(newReview);
-        const totalRating = (property.rating * property.reviewes.length);
         const newRating = (totalRating + req.body.rating) / (property.reviewes.length);
 
-        property.rating = newRating;
+        property.rating = Math.max(newRating,5);
         await property.save();
         return res.status(200).send(newReview);                                        
     }
