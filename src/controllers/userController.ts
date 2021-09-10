@@ -42,12 +42,12 @@ const createUser = async (req: Request, res: Response) => {
     res.status(201).send(_.omit(user, ['password']));
 }
 
-const uploadPhoto = async (req: any, res: Response) => {           
+const uploadPhoto = async (req: any, res: Response) => {                   
     if(!req.file) return res.status(400).send(new Error("File image is required"));    
     // @ts-ignore 
     const user = await User.findByIdAndUpdate(req.user.id,{
-        profileImage: "http://localhost:5000/" + req.file.path.substring(8,req.file.path.length),
-    });    
+        profileImage: req.file.filename,
+    });            
     return res.status(200).send(_.omit(user, ['password','isAdmin']));
 }
 
@@ -62,7 +62,6 @@ const updateUser = async (req: any, res: Response) => {
         // @ts-ignore
         return res.status(400).send(e.message);
     }
-
 }
 
 const getPosts = async (req: any, res: Response) => {    
