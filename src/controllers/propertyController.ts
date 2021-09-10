@@ -34,6 +34,10 @@ const getProperties = async (req: any, res: Response) => {
 
     const properties = await Property.find(filterOptions);
     const filledProperties = await fillOwnersInProperties(properties);
+    
+    for(let i = 0; i < properties.length; i++){
+        properties[i].reviewes = await fillUsersInReviewes(properties[i].reviewes);
+    }
     return res.status(200).send(filledProperties);
 }
 
@@ -181,7 +185,7 @@ const updateReviewProperty = async (req: any, res: Response) => {
         property.reviewes.push(newReview);
         const newRating = (totalRating + req.body.rating) / (property.reviewes.length);
 
-        property.rating = Math.max(newRating,5);
+        property.rating = Math.min(newRating,5);
         await property.save();
         return res.status(200).send(newReview);                                        
     }
