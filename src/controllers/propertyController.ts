@@ -65,6 +65,7 @@ const searchProperties = async(req: Request, res:Response) => {
     return res.status(200).send(results);
 }
 
+
 const addProperty = async (req: any, res: Response) => {    
     const property:  IProperty = new Property(req.body);
     //@ts-ignore
@@ -73,9 +74,9 @@ const addProperty = async (req: any, res: Response) => {
         property.ownerid = req.user.id;
         property.status = "pending";
         //@ts-ignore
-        // console.log(req.files);
+        console.log(req.files);
         //@ts-ignore        
-        property.images = req.files.map(file => getImageUrl(file));                    
+        property.images = req.files.map(file => file.filename);                    
         await property.save();
                 
         // let updatedUser = await User.findOneAndUpdate({"id": req.user.id}, { $push: { posts: property.id } }, {new: true});
@@ -138,6 +139,20 @@ const getUserReview = async (req: any, res: Response) => {
         return res.status(400).send(new ErrorMessage(e.message));
     }    
 }
+
+const bestRatedProperties =  async (req: any, res: Response) => {    
+    try{
+        const results = await Property.find({}).sort('-rating').limit(5);
+        for(let i = 0; i < results.length; i++){        
+            results[i].owner = await getOwner(results[i].ownerid);
+        }
+        return res.status(200).send(results);
+    }
+    catch(e){
+        //@ts-ignore
+        return res.status(400).send(new ErrorMessage(e.message));
+    }
+} 
 
 const updateReviewProperty = async (req: any, res: Response) => {    
     try{        
@@ -293,7 +308,8 @@ const PropertyController = {
     getProperty,
     searchProperties,
     updateReviewProperty,
-    getUserReview
+    getUserReview,
+    bestRatedProperties
 }
 
 export default PropertyController;
