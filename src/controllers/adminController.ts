@@ -12,7 +12,8 @@ import { fillOwnersInProperties } from "../utils/propertyUtils";
 const pendingProperties = async(req:any, res: Response) => {
     //@ts-ignore
     const properties = await property.find({status: "pending"});    
-    return res.status(200).send(properties);    
+    const filledProperties = await fillOwnersInProperties(properties);
+    return res.status(200).send(filledProperties);    
 }
 
 const approveProperty = async (req: any, res: Response) => {        

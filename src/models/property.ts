@@ -61,8 +61,7 @@ const PropertySchema = new mongoose.Schema({
     category: {
         type: String,
         text: true,
-        required: true,
-        minlength: 5,
+        required: true,        
         maxlength: 50,
     },    
     images: {
