@@ -23,7 +23,6 @@ const getProperty = async (req: any, res: Response) => {
 }
 
 
-//to be improved by naty with filtering and pagination
 const getProperties = async (req: any, res: Response) => {    
     const properties = await Property.find({});
     const filledProperties = await fillOwnersInProperties(properties);
@@ -133,8 +132,6 @@ const likeProperty = async (req: any, res: Response) => {
         let user = await User.findById(req.user.id);
         user?.likedProperties.push(property.id);
 
-        //adding the current user to users who liked the property
-        //can be removed later if the number of users only is required
         property.likedBy.push(req.user.id);
         
         await property.save();
