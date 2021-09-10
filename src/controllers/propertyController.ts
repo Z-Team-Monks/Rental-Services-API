@@ -134,6 +134,7 @@ const getUserReview = async (req: any, res: Response) => {
         if(hasUserAlreadyReviewed.length == 0){
             return res.status(400).send(new ErrorMessage("user has not reviewed the property yet"));
         }
+        hasUserAlreadyReviewed[0].user = await getOwner(req.user.id);
         return res.status(200).send(hasUserAlreadyReviewed[0]);                                        
     }
     catch(e){
@@ -144,7 +145,7 @@ const getUserReview = async (req: any, res: Response) => {
 
 const bestRatedProperties =  async (req: any, res: Response) => {    
     try{
-        const results = await Property.find({}).sort('-rating').limit(5);
+        const results = await Property.find({status: "approved"}).sort('-rating').limit(5);
         for(let i = 0; i < results.length; i++){        
             results[i].owner = await getOwner(results[i].ownerid);
         }
@@ -187,6 +188,7 @@ const updateReviewProperty = async (req: any, res: Response) => {
 
         property.rating = Math.min(newRating,5);
         await property.save();
+        newReview.user = await getOwner(req.user.id);
         return res.status(200).send(newReview);                                        
     }
     catch(e){
