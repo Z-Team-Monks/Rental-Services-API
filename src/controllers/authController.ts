@@ -22,8 +22,17 @@ const getToken = async (req : Request, res: Response) => {
     res.send(token);
 }
 
+const isAdmin = async (req : Request, res: Response) => {
+    let user = await User.findOne({
+        email: req.body.email
+    });
+    if (!user) return res.status(404).send('No such user!');
+    res.send({isAdmin: user.isAdmin});
+}
+
 const AuthController = {
     getToken,
+    isAdmin
 }
 
 export default AuthController;
