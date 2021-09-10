@@ -185,7 +185,7 @@ const updateReviewProperty = async (req: any, res: Response) => {
         property.reviewes.push(newReview);
         const newRating = (totalRating + req.body.rating) / (property.reviewes.length);
 
-        property.rating = Math.max(newRating,5);
+        property.rating = Math.min(newRating,5);
         await property.save();
         return res.status(200).send(newReview);                                        
     }
