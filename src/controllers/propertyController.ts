@@ -34,6 +34,10 @@ const getProperties = async (req: any, res: Response) => {
 
     const properties = await Property.find(filterOptions);
     const filledProperties = await fillOwnersInProperties(properties);
+    
+    for(let i = 0; i < properties.length; i++){
+        properties[i].reviewes = await fillUsersInReviewes(properties[i].reviewes);
+    }
     return res.status(200).send(filledProperties);
 }
 
