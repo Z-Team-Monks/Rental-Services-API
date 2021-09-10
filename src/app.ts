@@ -31,7 +31,7 @@ app.use("/api/auth", Routes.authRoute);
 app.use("/api/property/",Routes.propertyRoute);
 
 
-//lines below serve files inside uploads directory and make them accessible through http://localhost:3000/filename
+//lines below serve files inside uploads directory and make them accessible through http://localhost:port/filename
 app.use(express.static(__dirname + '/public'));
 app.use(express.static('uploads'));
 app.use(errorMiddleware);
