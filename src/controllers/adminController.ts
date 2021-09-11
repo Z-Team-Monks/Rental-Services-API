@@ -5,7 +5,7 @@ import {
     Response
 } from "express";
 import mongoose from "mongoose";
-import { fillOwnersInProperties } from "../utils/propertyUtils";
+import { fillOwnersInProperties, fillUsersInReviewes } from "../utils/propertyUtils";
 
 
 
@@ -13,6 +13,9 @@ const pendingProperties = async(req:any, res: Response) => {
     //@ts-ignore
     const properties = await property.find({status: "pending"});    
     const filledProperties = await fillOwnersInProperties(properties);
+    for(let i = 0; i < properties.length; i++){
+        properties[i].reviewes = await fillUsersInReviewes(properties[i].reviewes);
+    }
     return res.status(200).send(filledProperties);    
 }
 
@@ -24,6 +27,7 @@ const approveProperty = async (req: any, res: Response) => {
         }
         pendingProperty.status = "approved";
         await pendingProperty.save();
+        pendingProperty.reviewes = await fillUsersInReviewes(pendingProperty.reviewes);
         return res.status(201).send(pendingProperty);
     }
     catch(e){
