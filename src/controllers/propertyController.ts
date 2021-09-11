@@ -115,7 +115,7 @@ const updateProperty = async (req: any, res: Response) => {
         return res.status(200).send(newProperty);                    
     }
     catch(e){
-        console.log(e.message);
+        // console.log(e.message);
         //@ts-ignore        
         return res.send(400).send(new ErrorMessage(e.message));
     }    
