@@ -74,7 +74,7 @@ const addProperty = async (req: any, res: Response) => {
         property.ownerid = req.user.id;
         property.status = "pending";
         //@ts-ignore
-        // console.log(req.files);
+        property.cost.bill = parseFloat(property.cost.bill);
         //@ts-ignore        
         property.images = req.files.map(file => file.filename);                    
         await property.save();
@@ -115,7 +115,8 @@ const updateProperty = async (req: any, res: Response) => {
         return res.status(200).send(newProperty);                    
     }
     catch(e){
-        //@ts-ignore
+        // console.log(e.message);
+        //@ts-ignore        
         return res.send(400).send(new ErrorMessage(e.message));
     }    
 }
